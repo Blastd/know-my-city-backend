@@ -1,0 +1,28 @@
+{
+  "name": "know-my-city-backend",
+  "version": "1.0.0",
+  "description": "Backend for Know my City (Barletta)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "city",
+    "tourism",
+    "maps"
+  ],
+  "author": "DrewTw aka Blastd",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "express-csp-header": "^5.1.0",
+    "node-cron": "^3.0.1",
+    "node-fetch": "^3.2.10",
+    "osmtogeojson": "^3.0.0-beta.4",
+    "sanitize-filename": "^1.6.3",
+    "serve-static": "^1.15.0",
+    "sleep": "^6.3.0",
+    "uuid": "^8.3.2"
+  }
+}
