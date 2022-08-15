@@ -66,8 +66,6 @@ cron.schedule('0 30 * * * *', () => {
     queryManager.updateQuery();
 });
 
-const server = app.listen(443, function(){
-    let host = server.address().address;
-    let port = server.address().port;
+const server = app.listen(process.env.PORT || 3000, function(){
     console.log("Know my city | Backend");
 });
