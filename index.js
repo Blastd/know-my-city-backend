@@ -61,7 +61,7 @@ app.get('*', function (req, res) {
     .send('Wanna a durmí sté');
 });
 
-cron.schedule('30 56 * * * *', () => {
+cron.schedule('0 30 * * * *', () => {
     console.log('[ ! ] Hourly query update');
     queryManager.updateQuery();
 });
