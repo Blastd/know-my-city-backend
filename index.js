@@ -5,6 +5,7 @@ const { expressCspHeader, INLINE, NONE, SELF } = require('express-csp-header');
 const getSign = require('./signs/signsIndex');
 const queryManager = require('./queries/queries');
 const { query } = require('express');
+const cors = require('cors');
 
 const app = express();
 
@@ -19,6 +20,17 @@ app.use(expressCspHeader({
         'worker-src': [NONE],
         'block-all-mixed-content': true
     }
+}));
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+
+
+app.use(cors({
+    origin: '*'
 }));
 
 app.use(serveStatic('./media'));
