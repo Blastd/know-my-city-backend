@@ -35,6 +35,8 @@ app.use(cors({
 
 app.use(serveStatic('./media'));
 
+app.use(serveStatic('./pages/css'));
+
 app.get("/getSign", (req, res, next) => {
     if(req.query.name == null)
         return res
@@ -61,7 +63,6 @@ app.get("/getFeatures", (req, res, next) => {
         .send(errorQuery);
 })
 
-
 // app.get("/startUpdate", (req, res, next) => {
 //     res.status(200).send("OK.");
 //     queryManager.updateQuery();
@@ -70,10 +71,10 @@ app.get("/getFeatures", (req, res, next) => {
 app.get('*', function (req, res) {
     res
     .status(400)
-    .send('Wanna a durmí sté');
+    .sendFile("pages/index.html", {root: __dirname});
 });
 
-cron.schedule('0 30 * * * *', () => {
+cron.schedule('0 0 */2 * * *', () => {
     console.log('[ ! ] Hourly query update');
     queryManager.updateQuery();
 });
