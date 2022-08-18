@@ -72,7 +72,7 @@ function getQuery(type){
     
 }
 
-function updateQuery(){
+async function updateQuery(){
     try{
         let queries = [
             {name: "water", tagList: [{amenity: "drinking_water"}]},
@@ -91,19 +91,24 @@ function updateQuery(){
             {name: "pharmacy", tagList: [{amenity: "pharmacy"}]},
         ];
         console.info(`[ i ] Updating POI data...${0}/${queries.length}`);
-        var current = 0;
-        var delayMultiplier = 5000;
-        queries.forEach((single)=>{
-            setTimeout(()=>{
-                fetchQuery(single.name, single.tagList)
-            }, current * delayMultiplier);
-            current++;
-            console.info(`[ i ] Updating POI data... [${current}/${queries.length}]\n`);
-        });
+        var delayTime = 5000;
+        for(let current = 0; current<queries.length; current++){
+            fetchQuery(queries[current].name, queries[current].tagList);
+            await delay(delayTime);
+            console.info(`[ i ] Updating POI data... [${current+1}/${queries.length}]\n`);
+        }
     }catch(err){
         console.log(err);
     }
 }
+
+function delay(t, val) {
+    return new Promise(function(resolve) {
+        setTimeout(function() {
+            resolve(val);
+        }, t);
+    });
+ }
 
 function buildQuery(tagList){
     var temp = "";
@@ -115,33 +120,33 @@ function buildQuery(tagList){
     return temp.replaceAll('{','[').replaceAll('}',']').replaceAll(':', "=").replaceAll("=null", "");
 }
 
-function fetchQuery(name, tagList){
-    return new Promise((resolve, reject)=>{
-        let timeout = 60;
-        let tags = buildQuery(tagList);
-        //let query = `http://overpass-api.de/api/interpreter?data=[out:json][timeout:${timeout}];(${tags});out%20body;%3E;`;
-        //let query = `https://overpass.osm.ch/api/interpreter?data=[out:xml][timeout:${timeout}];(${tags});out%20body;out%20geom;%3E;`;
-        let query   = `https://lz4.overpass-api.de/api/interpreter?data=[out:json][timeout:${timeout}];(${tags});out%20body;%3E;out%20skel%20qt;`;
-        try{
-            fetch(query).then((result)=>{
-            console.log(result);
-            result.json().then((resultData)=>{
-                console.log(`Result for ${query}:\n`);
-                var convertedData = osmtogeojson(resultData);
-                fs.writeFile(`./queries/${name}.json`, JSON.stringify(convertedData), 'utf8', function (err) {
-                    if (err)
-                        console.error("An error occured while writing JSON Object to File.", err);
-                    else
-                        console.log(`[OK!] ${name}.json saved.`);
-                    });
-                })
-                resolve();
+async function fetchQuery(name, tagList, errorCount){
+    console.log(`Fetching ${name}...`);
+    let timeout = 60;
+    let tags = buildQuery(tagList);
+    //let query = `http://overpass-api.de/api/interpreter?data=[out:json][timeout:${timeout}];(${tags});out%20body;%3E;`;
+    //let query = `https://overpass.osm.ch/api/interpreter?data=[out:xml][timeout:${timeout}];(${tags});out%20body;out%20geom;%3E;`;
+    let query   = `https://lz4.overpass-api.de/api/interpreter?data=[out:json][timeout:${timeout}];(${tags});out%20body;%3E;out%20skel%20qt;`;
+    try{
+        await fetch(query).then((result)=>{
+        if(result.status != 200) throw 'Generic fetch error. Retrying...';
+        result.json().then((resultData)=>{
+            //console.log(`Result for ${query}:\n`);
+            console.log(`Fetch end for ${name}.`)
+            var convertedData = osmtogeojson(resultData);
+            fs.writeFile(`./queries/${name}.json`, JSON.stringify(convertedData), 'utf8', function (err) {
+                if (err)
+                    console.error("An error occured while writing JSON Object to File.", err);
+                else
+                    console.log(`[OK!] ${name}.json saved.`);
+                });
             })
-        }catch(error){
-            reject(error);
-        }
-        
-    });
+        })
+    }catch(error){
+        console.log(error);
+        await delay(10000);
+        fetchQuery(name, tagList, errorCount + 1);
+    }
     
 }
 
