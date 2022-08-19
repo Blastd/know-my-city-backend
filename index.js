@@ -74,7 +74,7 @@ app.get('*', function (req, res) {
     .sendFile("pages/index.html", {root: __dirname});
 });
 
-cron.schedule('0 0 */2 * * *', () => {
+cron.schedule('0 0 * * * *', () => {
     console.log('[ ! ] Hourly query update');
     queryManager.updateQuery();
 });
