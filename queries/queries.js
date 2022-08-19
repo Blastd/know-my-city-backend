@@ -144,7 +144,7 @@ async function fetchQuery(name, tagList, errorCount){
         })
     }catch(error){
         console.log(error);
-        await delay(10000);
+        await delay(20000);
         fetchQuery(name, tagList, errorCount + 1);
     }
     

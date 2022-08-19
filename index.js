@@ -65,7 +65,7 @@ app.get("/getFeatures", (req, res, next) => {
 
 app.get("/startUpdate", (req, res, next) => {
     res.status(200).send("OK.");
-    queryManager.updateQuery();
+    //queryManager.updateQuery();
 })
 
 app.get('*', function (req, res) {
