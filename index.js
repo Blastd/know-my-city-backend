@@ -39,7 +39,7 @@ app.use(serveStatic('./pages/css'));
 
 app.get("/getSign", (req, res, next) => {
     if(req.query.name == null)
-        return res
+        res
         .header("Content-Type", "application/json")
         .status(400)
         .send(errorQuery);
@@ -80,5 +80,10 @@ cron.schedule('0 0 * * * *', () => {
 });
 
 const server = app.listen(process.env.PORT || 3000, function(){
-    console.log("Know my city | Backend");
+    console.log("[   ] Know my city | Backend");
+    var currentDate = new Date(Date.now());
+    if(currentDate.getMinutes() < 50){
+        console.log("[ i ] Startup query update");
+        queryManager.updateQuery();
+    }
 });
